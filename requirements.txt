@@ -1,9 +1,2 @@
 streamlit
-google-generativeai
-google-genai
-edge-tts
-pillow
-youtube-transcript-api
-moviepy
-docx
-pypdf
+python-docx

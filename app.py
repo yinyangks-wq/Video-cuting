@@ -11,7 +11,7 @@ st.set_page_config(page_title="Video Cutter & Auto Subtitle", layout="centered")
 st.title("🎬 Video Cutter & Auto Subtitle")
 st.caption("Video ကို Fast Cut ပြုလုပ်ပြီး အသံမှ စာတမ်းထိုး (Transcript / SRT) ကို အလိုအလျောက် ထုတ်ပေးသည့် Tool")
 
-# Whisper Model ကို Streamlit Cache ဖြင့် ခေါ်ယူခြင်း (RAM သက်သာစေရန် 'tiny' model ကို သုံးထားသည်)
+# Whisper Model ကို Streamlit Cache ဖြင့် ခေါ်ယူခြင်း
 @st.cache_resource
 def load_whisper():
     return whisper.load_model("tiny")
@@ -40,12 +40,18 @@ if source_type == "Video Link (YouTube/Web)":
     if url and st.button("Link မှ Video ရယူမည်"):
         with st.spinner("Video လင့်ခ်ကို ဒေါင်းလုဒ်ဆွဲနေပါသည်..."):
             try:
-                # Format Error မတက်စေရန် Flexible အဖြစ်ဆုံး Option များကို သုံးထားပါသည်
+                # HTTP 403 Forbidden Error ကို ရှောင်ရန် User-Agent နှင့် Android Client ပြောင်းထားပါသည်
                 ydl_opts = {
                     'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                     'outtmpl': tempfile.mktemp(suffix='.mp4'),
                     'quiet': True,
                     'no_warnings': True,
+                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'extractor_args': {
+                        'youtube': {
+                            'player_client': ['android', 'web']
+                        }
+                    }
                 }
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=True)
@@ -146,3 +152,4 @@ if video_path and os.path.exists(video_path):
                         file_name="cut_video.mp4",
                         mime="video/mp4"
                     )
+                    

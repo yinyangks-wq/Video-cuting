@@ -1,4 +1,9 @@
 streamlit
-yt-dlp
-ffmpeg-python
-openai-whisper
+google-generativeai
+google-genai
+edge-tts
+pillow
+youtube-transcript-api
+moviepy
+docx
+pypdf

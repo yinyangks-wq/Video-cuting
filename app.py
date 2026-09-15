@@ -6,9 +6,9 @@ import os
 import whisper
 from datetime import timedelta
 
-st.set_page_config(page_title="Streamlit Video Cutter & Subtitle", layout="centered")
+st.set_page_config(page_title="Video Cutter & Auto Subtitle", layout="centered")
 
-st.title("🎬 Streamlit Video Cutter & Auto Subtitle")
+st.title("🎬 Video Cutter & Auto Subtitle")
 st.caption("Video ကို Fast Cut ပြုလုပ်ပြီး အသံမှ စာတမ်းထိုး (Transcript / SRT) ကို အလိုအလျောက် ထုတ်ပေးသည့် Tool")
 
 # Whisper Model ကို Streamlit Cache ဖြင့် ခေါ်ယူခြင်း (RAM သက်သာစေရန် 'tiny' model ကို သုံးထားသည်)
@@ -40,9 +40,12 @@ if source_type == "Video Link (YouTube/Web)":
     if url and st.button("Link မှ Video ရယူမည်"):
         with st.spinner("Video လင့်ခ်ကို ဒေါင်းလုဒ်ဆွဲနေပါသည်..."):
             try:
+                # Format Error မတက်စေရန် Flexible အဖြစ်ဆုံး Option များကို သုံးထားပါသည်
                 ydl_opts = {
-                    'format': 'best[ext=mp4]/best',
+                    'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                     'outtmpl': tempfile.mktemp(suffix='.mp4'),
+                    'quiet': True,
+                    'no_warnings': True,
                 }
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=True)
@@ -75,8 +78,8 @@ if video_path and os.path.exists(video_path):
     with col2:
         st.write("**ပြီးဆုံးမည့်အချိန် (End)**")
         h_e = st.number_input("Hour", 0, 24, 0, key="he")
-        m_e = st.number_input("Min", 0, 59, 10, key="me")
-        s_e = st.number_input("Sec", 0, 59, 0, key="se")
+        m_e = st.number_input("Min", 0, 59, 0, key="me")
+        s_e = st.number_input("Sec", 0, 59, 10, key="se")
 
     start_sec = (h_s * 3600) + (m_s * 60) + s_s
     end_sec = (h_e * 3600) + (m_e * 60) + s_e
@@ -143,4 +146,3 @@ if video_path and os.path.exists(video_path):
                         file_name="cut_video.mp4",
                         mime="video/mp4"
                     )
-                  
